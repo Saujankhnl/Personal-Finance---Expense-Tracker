@@ -1,7 +1,10 @@
+
 from rest_framework import serializers
-from .models import Transactions
+from .models import Transaction
+
 
 class TransactionSerializer(serializers.ModelSerializer):
-    class meta:
-        model = Transactions
+    class Meta:
+        model = Transaction
         fields = "__all__"
+        read_only_fields = ("user",)

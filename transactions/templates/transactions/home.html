@@ -1,11 +1,608 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Home page</h1>
-</body>
-</html>
+
+{% extends "base.html" %}
+
+{% block title %}Dashboard | FinTrack{% endblock %}
+
+{% block content %}
+
+<div class="min-h-screen bg-[#f5faf6] text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-emerald-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
+
+            <a href="{% url 'transactions:home' %}"
+               class="flex items-center gap-3">
+                <div class="w-11 h-11 bg-emerald-600 rounded-xl
+                            flex items-center justify-center">
+                    <i class="fa-solid fa-wallet text-white text-xl"></i>
+                </div>
+
+                <div>
+                    <h1 class="text-xl font-bold text-emerald-800">
+                        FinTrack
+                    </h1>
+                    <p class="text-xs text-gray-500">
+                        Personal Finance Manager
+                    </p>
+                </div>
+            </a>
+
+            <div class="flex items-center gap-4">
+                <span class="text-sm font-semibold text-gray-700">
+                    {{ request.user.username }}
+                </span>
+
+                <form method="POST" action="{% url 'transactions:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="bg-red-50 text-red-600 border border-red-200
+                                   hover:bg-red-100 px-3 py-2 rounded-lg
+                                   text-sm font-semibold">
+                        <i class="fa-solid fa-right-from-bracket mr-1"></i>
+                        Logout
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-5 py-8">
+
+        <!-- Page heading -->
+        <section class="mb-8">
+            <p class="text-sm font-semibold text-emerald-700 mb-2">
+                YOUR FINANCIAL WORKSPACE
+            </p>
+
+            <h2 class="text-3xl font-bold text-gray-900">
+                Personal Finance Tracker
+            </h2>
+
+            <p class="text-gray-500 mt-2">
+                Add your income and expenses, and keep your records organized.
+            </p>
+        </section>
+
+        <!-- Messages -->
+        <div id="message-box"
+             class="hidden mb-5 p-4 rounded-xl text-sm"
+             role="status"
+             aria-live="polite"></div>
+
+        <!-- Add Transaction Form -->
+        <section class="bg-white border border-emerald-100
+                        rounded-2xl shadow-sm p-6 sm:p-8 mb-8">
+
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-11 h-11 rounded-xl bg-emerald-100
+                            flex items-center justify-center">
+                    <i class="fa-solid fa-plus text-emerald-700 text-lg"></i>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900">
+                        Add Transaction
+                    </h3>
+                    <p class="text-sm text-gray-500">
+                        Record your income or an expense.
+                    </p>
+                </div>
+            </div>
+
+            <form id="transaction-form" class="space-y-5">
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                    <!-- Title -->
+                    <div>
+                        <label for="title"
+                               class="block text-sm font-semibold mb-2">
+                            Transaction Title *
+                        </label>
+
+                        <input type="text"
+                               id="title"
+                               name="title"
+                               maxlength="100"
+                               required
+                               placeholder="e.g. Groceries"
+                               class="w-full border border-gray-200 rounded-xl
+                                      px-4 py-3 outline-none
+                                      focus:border-emerald-500
+                                      focus:ring-2 focus:ring-emerald-100">
+                    </div>
+
+                    <!-- Amount -->
+                    <div>
+                        <label for="amount"
+                               class="block text-sm font-semibold mb-2">
+                            Amount (Rs.) *
+                        </label>
+
+                        <input type="number"
+                               id="amount"
+                               name="amount"
+                               min="0.01"
+                               max="99999999.99"
+                               step="0.01"
+                               required
+                               placeholder="e.g. 1200.00"
+                               class="w-full border border-gray-200 rounded-xl
+                                      px-4 py-3 outline-none
+                                      focus:border-emerald-500
+                                      focus:ring-2 focus:ring-emerald-100">
+                    </div>
+
+                    <!-- Type -->
+                    <div>
+                        <label for="transaction_type"
+                               class="block text-sm font-semibold mb-2">
+                            Transaction Type *
+                        </label>
+
+                        <select id="transaction_type"
+                                name="transaction_type"
+                                required
+                                class="w-full border border-gray-200 rounded-xl
+                                       px-4 py-3 bg-white outline-none
+                                       focus:border-emerald-500
+                                       focus:ring-2 focus:ring-emerald-100">
+
+                            <option value="expense" selected>Expense</option>
+                            <option value="income">Income</option>
+                        </select>
+                    </div>
+
+                    <!-- Category -->
+                    <div>
+                        <label for="category"
+                               class="block text-sm font-semibold mb-2">
+                            Category *
+                        </label>
+
+                        <select id="category"
+                                name="category"
+                                required
+                                class="w-full border border-gray-200 rounded-xl
+                                       px-4 py-3 bg-white outline-none
+                                       focus:border-emerald-500
+                                       focus:ring-2 focus:ring-emerald-100">
+
+                            <option value="">Select a category</option>
+                            <option value="Food">Food</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Bills">Bills</option>
+                            <option value="Education">Education</option>
+                            <option value="Health">Health</option>
+                            <option value="Salary">Salary</option>
+                            <option value="Business">Business</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Date -->
+                    <div class="md:col-span-2">
+                        <label for="date"
+                               class="block text-sm font-semibold mb-2">
+                            Transaction Date *
+                        </label>
+
+                        <input type="date"
+                               id="date"
+                               name="date"
+                               required
+                               class="w-full border border-gray-200 rounded-xl
+                                      px-4 py-3 outline-none
+                                      focus:border-emerald-500
+                                      focus:ring-2 focus:ring-emerald-100">
+                    </div>
+
+                    <!-- Description -->
+                    <div class="md:col-span-2">
+                        <label for="description"
+                               class="block text-sm font-semibold mb-2">
+                            Description
+                        </label>
+
+                        <textarea id="description"
+                                  name="description"
+                                  rows="3"
+                                  placeholder="Add an optional note..."
+                                  class="w-full border border-gray-200 rounded-xl
+                                         px-4 py-3 outline-none resize-y
+                                         focus:border-emerald-500
+                                         focus:ring-2 focus:ring-emerald-100"></textarea>
+                    </div>
+
+                </div>
+
+                <div class="flex flex-wrap gap-3">
+                    <button type="submit"
+                            id="submit-button"
+                            class="bg-emerald-600 hover:bg-emerald-700
+                                   text-white px-6 py-3 rounded-xl
+                                   font-semibold transition">
+
+                        <i class="fa-solid fa-plus mr-2"></i>
+                        Save Transaction
+                    </button>
+
+                    <button type="reset"
+                            class="bg-gray-100 hover:bg-gray-200
+                                   text-gray-700 px-6 py-3 rounded-xl
+                                   font-semibold transition">
+                        Clear Form
+                    </button>
+                </div>
+            </form>
+        </section>
+
+
+        <!-- Transaction History -->
+        <section class="bg-white border border-emerald-100
+                        rounded-2xl shadow-sm overflow-hidden">
+
+            <div class="p-6 border-b border-gray-100
+                        flex flex-col sm:flex-row sm:items-center
+                        sm:justify-between gap-3">
+
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900">
+                        Transaction History
+                    </h3>
+
+                    <p class="text-sm text-gray-500 mt-1">
+                        Your saved income and expenses.
+                    </p>
+                </div>
+
+                <button type="button"
+                        id="refresh-button"
+                        class="self-start bg-emerald-50 text-emerald-700
+                               hover:bg-emerald-100 px-4 py-2 rounded-lg
+                               text-sm font-semibold">
+                    <i class="fa-solid fa-rotate mr-2"></i>
+                    Refresh
+                </button>
+            </div>
+
+            <!-- Loading / Empty state -->
+            <div id="loading-message"
+                 class="p-8 text-center text-gray-500">
+                <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+                Loading transactions...
+            </div>
+
+            <div id="empty-message"
+                 class="hidden p-10 text-center">
+                <div class="w-16 h-16 rounded-full bg-emerald-50
+                            flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-receipt text-emerald-600 text-2xl"></i>
+                </div>
+
+                <h4 class="font-bold text-gray-800">
+                    No transactions yet
+                </h4>
+
+                <p class="text-sm text-gray-500 mt-2">
+                    Add your first income or expense using the form above.
+                </p>
+            </div>
+
+            <!-- Table -->
+            <div id="table-container" class="hidden overflow-x-auto">
+
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-emerald-50 text-emerald-900">
+                        <tr>
+                            <th class="px-5 py-4 font-semibold">Date</th>
+                            <th class="px-5 py-4 font-semibold">Title</th>
+                            <th class="px-5 py-4 font-semibold">Category</th>
+                            <th class="px-5 py-4 font-semibold">Type</th>
+                            <th class="px-5 py-4 font-semibold text-right">
+                                Amount
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="transaction-list"
+                           class="divide-y divide-gray-100">
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="list-error"
+                 class="hidden p-6 text-center text-red-600 text-sm">
+            </div>
+
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center py-8">
+            <p class="text-sm text-gray-500">
+                FinTrack — Take control of your finances.
+            </p>
+        </footer>
+
+    </main>
+</div>
+
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+    // URL generated by the DRF router.
+    const API_URL = "{% url 'transactions:transaction-list' %}";
+
+    const transactionForm = document.getElementById("transaction-form");
+    const transactionList = document.getElementById("transaction-list");
+    const messageBox = document.getElementById("message-box");
+    const loadingMessage = document.getElementById("loading-message");
+    const emptyMessage = document.getElementById("empty-message");
+    const tableContainer = document.getElementById("table-container");
+    const listError = document.getElementById("list-error");
+    const submitButton = document.getElementById("submit-button");
+
+    // Today's date for the date input.
+    const dateInput = document.getElementById("date");
+    const today = new Date();
+    const localDate = [
+        today.getFullYear(),
+        String(today.getMonth() + 1).padStart(2, "0"),
+        String(today.getDate()).padStart(2, "0")
+    ].join("-");
+
+    dateInput.value = localDate;
+
+    // Read the CSRF token generated by Django.
+    function getCSRFToken() {
+        return document.querySelector(
+            "#transaction-form [name=csrfmiddlewaretoken]"
+        ).value;
+    }
+
+    // Display success or error messages.
+    function showMessage(message, type = "success") {
+        messageBox.textContent = message;
+        messageBox.className = "mb-5 p-4 rounded-xl text-sm";
+
+        if (type === "success") {
+            messageBox.classList.add(
+                "bg-emerald-50", "text-emerald-800",
+                "border", "border-emerald-200"
+            );
+        } else {
+            messageBox.classList.add(
+                "bg-red-50", "text-red-700",
+                "border", "border-red-200"
+            );
+        }
+    }
+
+    function hideMessage() {
+        messageBox.classList.add("hidden");
+    }
+
+    // Convert DRF validation errors into readable text.
+    function getErrorMessage(data) {
+        if (typeof data === "string") {
+            return data;
+        }
+
+        if (data && typeof data === "object") {
+            return Object.entries(data)
+                .map(([field, errors]) => {
+                    const message = Array.isArray(errors)
+                        ? errors.join(", ")
+                        : String(errors);
+
+                    return field + ": " + message;
+                })
+                .join(" | ");
+        }
+
+        return "Something went wrong. Please try again.";
+    }
+
+    // Add a cell using textContent to avoid inserting user text as HTML.
+    function addCell(row, value, className = "") {
+        const cell = document.createElement("td");
+        cell.className = "px-5 py-4 " + className;
+        cell.textContent = value ?? "";
+        row.appendChild(cell);
+        return cell;
+    }
+
+    // Load saved transactions from the API.
+    async function loadTransactions() {
+        loadingMessage.classList.remove("hidden");
+        emptyMessage.classList.add("hidden");
+        tableContainer.classList.add("hidden");
+        listError.classList.add("hidden");
+        transactionList.replaceChildren();
+
+        try {
+            const response = await fetch(API_URL, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                },
+                credentials: "same-origin"
+            });
+
+            if (response.status === 401 || response.status === 403) {
+                throw new Error(
+                    "Authentication failed. Please log in again."
+                );
+            }
+
+            if (!response.ok) {
+                throw new Error(
+                    "Unable to load transactions (HTTP " +
+                    response.status + ")."
+                );
+            }
+
+            const data = await response.json();
+
+            // DRF may return a list or a paginated response.
+            const transactions = Array.isArray(data)
+                ? data
+                : data.results;
+
+            if (!Array.isArray(transactions)) {
+                throw new Error(
+                    "Unexpected API response. Check your DRF settings."
+                );
+            }
+
+            loadingMessage.classList.add("hidden");
+
+            if (transactions.length === 0) {
+                emptyMessage.classList.remove("hidden");
+                return;
+            }
+
+            // Sort newest dates first.
+            transactions.sort((a, b) =>
+                String(b.date).localeCompare(String(a.date))
+            );
+
+            transactions.forEach(transaction => {
+                const row = document.createElement("tr");
+                row.className = "hover:bg-emerald-50/50 transition";
+
+                addCell(row, transaction.date, "whitespace-nowrap");
+
+                const titleCell = addCell(
+                    row,
+                    transaction.title,
+                    "font-semibold text-gray-900"
+                );
+
+                // Show the optional description under the title.
+                if (transaction.description) {
+                    const description = document.createElement("p");
+                    description.className =
+                        "text-xs text-gray-500 font-normal mt-1";
+                    description.textContent = transaction.description;
+                    titleCell.appendChild(description);
+                }
+
+                addCell(row, transaction.category);
+
+                const isIncome =
+                    transaction.transaction_type === "income";
+
+                const typeCell = addCell(row, "");
+
+                const typeBadge = document.createElement("span");
+                typeBadge.className = isIncome
+                    ? "inline-block px-3 py-1 rounded-full text-xs " +
+                      "font-semibold bg-emerald-100 text-emerald-800"
+                    : "inline-block px-3 py-1 rounded-full text-xs " +
+                      "font-semibold bg-red-100 text-red-700";
+
+                typeBadge.textContent = isIncome ? "Income" : "Expense";
+                typeCell.appendChild(typeBadge);
+
+                const amount = Number(transaction.amount);
+                const formattedAmount = Number.isFinite(amount)
+                    ? amount.toLocaleString("en-IN", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    })
+                    : transaction.amount;
+
+                addCell(
+                    row,
+                    (isIncome ? "+ Rs. " : "- Rs. ") + formattedAmount,
+                    "text-right whitespace-nowrap font-semibold " +
+                    (isIncome ? "text-emerald-700" : "text-red-600")
+                );
+
+                transactionList.appendChild(row);
+            });
+
+            tableContainer.classList.remove("hidden");
+
+        } catch (error) {
+            loadingMessage.classList.add("hidden");
+            listError.textContent = error.message;
+            listError.classList.remove("hidden");
+        }
+    }
+
+    // Step 2: Save a new transaction through the DRF API.
+    transactionForm.addEventListener("submit", async function(event) {
+        event.preventDefault();
+        hideMessage();
+
+        submitButton.disabled = true;
+        submitButton.classList.add("opacity-60", "cursor-not-allowed");
+        submitButton.textContent = "Saving...";
+
+        const payload = {
+            title: document.getElementById("title").value.trim(),
+            amount: document.getElementById("amount").value,
+            transaction_type:
+                document.getElementById("transaction_type").value,
+            category: document.getElementById("category").value,
+            date: document.getElementById("date").value,
+            description:
+                document.getElementById("description").value.trim()
+        };
+
+        try {
+            const response = await fetch(API_URL, {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "X-CSRFToken": getCSRFToken()
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(getErrorMessage(data));
+            }
+
+            showMessage("Transaction saved successfully!");
+
+            transactionForm.reset();
+
+            // Reset the date and default transaction type.
+            dateInput.value = localDate;
+            document.getElementById("transaction_type").value = "expense";
+
+            // Refresh the list to include the newly saved record.
+            await loadTransactions();
+
+        } catch (error) {
+            showMessage(error.message, "error");
+        } finally {
+            submitButton.disabled = false;
+            submitButton.classList.remove(
+                "opacity-60", "cursor-not-allowed"
+            );
+            submitButton.innerHTML =
+                '<i class="fa-solid fa-plus mr-2"></i>Save Transaction';
+        }
+    });
+
+    // Refresh button.
+    document.getElementById("refresh-button")
+        .addEventListener("click", loadTransactions);
+
+    // Step 3: Load transaction history when the page opens.
+    loadTransactions();
+</script>
+
+{% endblock %}

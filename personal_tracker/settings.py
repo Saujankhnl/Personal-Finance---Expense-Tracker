@@ -156,3 +156,16 @@ TAILWIND_APP_NAME = "theme"
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+
+# Session Settings
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 30  # 30 days
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Security Settings
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+
+LOGIN_URL = "transactions:login_page"
+LOGIN_REDIRECT_URL = "transactions:home"
+LOGOUT_REDIRECT_URL = "transactions:login_page"
