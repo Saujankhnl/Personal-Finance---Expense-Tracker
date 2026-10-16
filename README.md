@@ -1,3 +1,6 @@
+![Uploading Screenshot 2026-10-16 183015.png…]()
+<img width="1915" height="1090" alt="Screenshot 2026-10-16 183004" src="https://github.com/user-attachments/assets/d80afc54-1886-47fd-8be9-30afe0c24cfa" />
+<img width="1917" height="1090" alt="Screenshot 2026-10-16 182959" src="https://github.com/user-attachments/assets/9110e468-3e15-415b-8be0-20039c545195" />
 FinTrack — Personal Finance & Expense Tracker
 FinTrack is a personal finance web application built with Django and Django REST Framework. It is designed to help users record income and expenses and review their transaction history through a simple web interface.
 Project status: In development. Confirm each feature in your local app before describing it as complete.
