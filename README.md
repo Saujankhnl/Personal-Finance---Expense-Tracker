@@ -1,0 +1,139 @@
+FinTrack — Personal Finance & Expense Tracker
+FinTrack is a personal finance web application built with Django and Django REST Framework. It is designed to help users record income and expenses and review their transaction history through a simple web interface.
+Project status: In development. Confirm each feature in your local app before describing it as complete.
+
+Features
+Implemented / currently being developed
+- User registration and login using Django authentication.
+- Add income and expense transactions.
+- Store transaction details such as title, amount, type, category, date, and description.
+- View transaction history through a Django REST Framework API.
+- Associate transactions with the authenticated user.
+- Use a JavaScript frontend to send requests to the API.
+Planned improvements
+- Edit and delete transactions from the interface.
+- Calculate income, expenses, and balance totals for the dashboard.
+- Add date and category filters.
+- Add charts and monthly summaries.
+- Improve automated tests and form validation.
+Tech Stack
+- Backend: Python, Django
+- API: Django REST Framework (DRF)
+- Database: MySQL (configured for the project)
+- Frontend: HTML, CSS, JavaScript
+- Styling: Tailwind CSS / DaisyUI (if enabled in your current setup)
+- Authentication: Django session authentication
+- Development tools: VS Code, Git, GitHub
+Transaction Data
+A transaction includes the following fields:
+Field	Description
+title	Short transaction name
+amount	Transaction amount
+transaction_type	income or expense
+category	Transaction category
+date	Date of the transaction
+description	Optional additional details
+user	User who owns the transaction
+
+
+The API assigns the transaction owner from the authenticated session. The API queryset should be restricted to the current user so users cannot view or modify other users' transactions.
+Getting Started
+1. Clone the repository
+Replace the placeholder URL with your GitHub repository URL:
+git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
+cd YOUR-REPOSITORY
+2. Create and activate a virtual environment
+On Windows PowerShell:
+python -m venv env
+.\env\Scripts\Activate.ps1
+If PowerShell blocks activation, you can run commands using the environment's Python executable directly, or follow your system's approved PowerShell execution-policy guidance.
+3. Install dependencies
+If your project has a requirements.txt file:
+pip install -r requirements.txt
+If it does not yet exist, install the project's required packages and generate it from the activated environment:
+pip install django djangorestframework mysqlclient
+pip freeze > requirements.txt
+Install any additional packages your project actually uses. Database driver requirements can vary by Windows/Python setup.
+4. Configure the database
+Create a MySQL database for the project. For example:
+CREATE DATABASE personal_finance_db
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+Configure the database connection in your Django settings using your local MySQL credentials. If you use environment variables, create a local .env file according to your settings implementation.
+Never commit database passwords, secret keys, or other credentials to GitHub. Add .env and other local secret files to .gitignore.
+5. Apply migrations
+From the directory containing manage.py, run:
+python manage.py migrate
+If your models have changed and migrations are not yet created, run:
+python manage.py makemigrations
+python manage.py migrate
+6. Create an administrator account (optional)
+python manage.py createsuperuser
+7. Start the development server
+python manage.py runserver
+Open the local site:
+- Home page: http://127.0.0.1:8000/home/ (if this matches your URL configuration)
+- Transactions API: http://127.0.0.1:8000/api/transactions/ (if this matches your URL configuration)
+- Django admin: http://127.0.0.1:8000/admin/
+The exact URLs depend on your project's URL configuration.
+API Overview
+The transactions endpoint is registered with a Django REST Framework router.
+Method	Endpoint	Purpose
+GET	/api/transactions/	List the authenticated user's transactions
+POST	/api/transactions/	Create a transaction
+GET	/api/transactions/<id>/	Retrieve one transaction owned by the user
+PUT / PATCH	/api/transactions/<id>/	Update a transaction owned by the user
+DELETE	/api/transactions/<id>/	Delete a transaction owned by the user
+
+
+These operations depend on the ModelViewSet, router, serializer, permissions, and user-filtered queryset being configured as described. Session-authenticated write requests must include a valid CSRF token.
+Example transaction JSON
+{
+  "title": "Grocery shopping",
+  "amount": "1500.00",
+  "transaction_type": "expense",
+  "category": "Food",
+  "date": "2026-10-15",
+  "description": "Bought groceries"
+}
+The user field is assigned by the backend and should not be supplied by the frontend.
+Security Notes
+- Keep SECRET_KEY and database credentials out of source control.
+- Use Django authentication and permissions for protected endpoints.
+- Filter transaction queries by the authenticated user.
+- Keep CSRF protection enabled when using session authentication.
+- Set DEBUG = False and configure production security settings before deployment.
+- Do not use Django's development server for production hosting.
+Project Structure
+Your project may look similar to this:
+Personal Finance & Expense Tracker/
+├── manage.py
+├── personal_tracker/
+│   ├── settings.py
+│   └── urls.py
+├── transactions/
+│   ├── migrations/
+│   ├── templates/
+│   │   └── transactions/
+│   │       └── home.html
+│   ├── models.py
+│   ├── serializers.py
+│   ├── views.py
+│   ├── urls.py
+│   └── admin.py
+├── static/
+├── requirements.txt
+└── README.md
+This is an example structure; adjust it to match the actual files in your repository.
+Roadmap
+- [ ] Complete and verify transaction creation from the frontend
+- [ ] Verify per-user access restrictions
+- [ ] Add edit and delete actions to the interface
+- [ ] Add dashboard totals: income, expenses, and balance
+- [ ] Add filtering and monthly summaries
+- [ ] Add automated tests
+- [ ] Prepare production deployment configuration
+Contributing
+This is a learning and portfolio project. Suggestions and constructive feedback are welcome. If you fork the project, create a branch for your changes and submit a pull request.
+License
+No license has been specified yet. Add a license file before allowing others to reuse or distribute the project under explicit terms.
