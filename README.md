@@ -40,7 +40,7 @@ The API assigns the transaction owner from the authenticated session. The API qu
 Getting Started
 1. Clone the repository
 Replace the placeholder URL with your GitHub repository URL:
-git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
+git clone https://github.com/Saujankhnl/Personal-Finance---Expense-Tracker
 cd YOUR-REPOSITORY
 2. Create and activate a virtual environment
 On Windows PowerShell:
@@ -69,71 +69,3 @@ python manage.py makemigrations
 python manage.py migrate
 6. Create an administrator account (optional)
 python manage.py createsuperuser
-7. Start the development server
-python manage.py runserver
-Open the local site:
-- Home page: http://127.0.0.1:8000/home/ (if this matches your URL configuration)
-- Transactions API: http://127.0.0.1:8000/api/transactions/ (if this matches your URL configuration)
-- Django admin: http://127.0.0.1:8000/admin/
-The exact URLs depend on your project's URL configuration.
-API Overview
-The transactions endpoint is registered with a Django REST Framework router.
-Method	Endpoint	Purpose
-GET	/api/transactions/	List the authenticated user's transactions
-POST	/api/transactions/	Create a transaction
-GET	/api/transactions/<id>/	Retrieve one transaction owned by the user
-PUT / PATCH	/api/transactions/<id>/	Update a transaction owned by the user
-DELETE	/api/transactions/<id>/	Delete a transaction owned by the user
-
-
-These operations depend on the ModelViewSet, router, serializer, permissions, and user-filtered queryset being configured as described. Session-authenticated write requests must include a valid CSRF token.
-Example transaction JSON
-{
-  "title": "Grocery shopping",
-  "amount": "1500.00",
-  "transaction_type": "expense",
-  "category": "Food",
-  "date": "2026-10-15",
-  "description": "Bought groceries"
-}
-The user field is assigned by the backend and should not be supplied by the frontend.
-Security Notes
-- Keep SECRET_KEY and database credentials out of source control.
-- Use Django authentication and permissions for protected endpoints.
-- Filter transaction queries by the authenticated user.
-- Keep CSRF protection enabled when using session authentication.
-- Set DEBUG = False and configure production security settings before deployment.
-- Do not use Django's development server for production hosting.
-Project Structure
-Your project may look similar to this:
-Personal Finance & Expense Tracker/
-├── manage.py
-├── personal_tracker/
-│   ├── settings.py
-│   └── urls.py
-├── transactions/
-│   ├── migrations/
-│   ├── templates/
-│   │   └── transactions/
-│   │       └── home.html
-│   ├── models.py
-│   ├── serializers.py
-│   ├── views.py
-│   ├── urls.py
-│   └── admin.py
-├── static/
-├── requirements.txt
-└── README.md
-This is an example structure; adjust it to match the actual files in your repository.
-Roadmap
-- [ ] Complete and verify transaction creation from the frontend
-- [ ] Verify per-user access restrictions
-- [ ] Add edit and delete actions to the interface
-- [ ] Add dashboard totals: income, expenses, and balance
-- [ ] Add filtering and monthly summaries
-- [ ] Add automated tests
-- [ ] Prepare production deployment configuration
-Contributing
-This is a learning and portfolio project. Suggestions and constructive feedback are welcome. If you fork the project, create a branch for your changes and submit a pull request.
-License
-No license has been specified yet. Add a license file before allowing others to reuse or distribute the project under explicit terms.
